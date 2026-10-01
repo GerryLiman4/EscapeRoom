@@ -108,6 +108,7 @@ public class SlidingPuzzlePopup : MinigamePopup
         }
         else
         {
+            puzzlePiece.Shake();
             // invalid puzzle
             return;
         }

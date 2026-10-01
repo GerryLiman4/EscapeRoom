@@ -18,6 +18,7 @@ public class PuzzlePieceUI : MonoBehaviour, IPointerDownHandler
 
     public void InitializePuzzleData(int id, Sprite iconSprite)
     {
+        GetComponent<RectTransform>().localScale = Vector3.one;
         this.id = id;
         icon.sprite = iconSprite;
         indexPosition = -1;
@@ -45,5 +46,20 @@ public class PuzzlePieceUI : MonoBehaviour, IPointerDownHandler
     {
         if (isSliding) return;
         OnPuzzleSelected?.Invoke(this);
+    }
+    public void Shake()
+    {
+        RectTransform rect = GetComponent<RectTransform>();
+        rect.anchoredPosition = Vector3.zero;
+        rect.DOKill();
+
+        rect.DOShakeAnchorPos(
+            0.25f,              // duration
+            new Vector2(15f, 0f), // strength X/Y
+            15,                 // vibrato
+            90f,                // randomness
+            false,              // snapping
+            true                // fade out
+        );
     }
 }

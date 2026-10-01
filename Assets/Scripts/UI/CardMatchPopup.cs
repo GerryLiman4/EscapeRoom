@@ -93,8 +93,9 @@ public class CardMatchPopup : MinigamePopup
 
         if (currentSelectedCard.id == secondCard.id) 
         {
-            currentSelectedCard.gameObject.SetActive(false);
-            secondCard.gameObject.SetActive(false);
+            currentSelectedCard.PopAndDisappear();
+            secondCard.PopAndDisappear();
+            yield return new WaitForSeconds(secondCard.flipDuration * 2f);
 
             bool isGameOver = true;
             foreach (CardUI card in cardList)
@@ -112,6 +113,7 @@ public class CardMatchPopup : MinigamePopup
         {
             currentSelectedCard.Flip();
             secondCard.Flip();
+            yield return new WaitForSeconds(secondCard.flipDuration * 2f);
         }
 
         isChecking = false;

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class CardUI : MonoBehaviour, IPointerUpHandler,IPointerDownHandler
+public class CardUI : MonoBehaviour, IPointerUpHandler,IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] public Image front;
     [SerializeField] public Image cardIcon;
@@ -30,6 +30,7 @@ public class CardUI : MonoBehaviour, IPointerUpHandler,IPointerDownHandler
 
     public void InitializeCardData(int id , Sprite iconSprite)
     {
+        GetComponent<RectTransform>().localScale = Vector3.one;
         this.id = id;
         cardIcon.sprite = iconSprite;
     }
@@ -48,6 +49,7 @@ public class CardUI : MonoBehaviour, IPointerUpHandler,IPointerDownHandler
     {
         if (isFlipping) return;
 
+        GetComponent<RectTransform>().localScale = Vector3.one;
         isFlipping = true;
 
         // Switch image while card is invisible from the side
@@ -81,5 +83,39 @@ public class CardUI : MonoBehaviour, IPointerUpHandler,IPointerDownHandler
     public void OnPointerDown(PointerEventData eventData)
     {
         OnCardSelected?.Invoke(this);
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (isFlipping) return;
+        transform.DOKill();
+        transform.DOScale(1f, 0.15f)
+            .SetEase(Ease.OutBack);
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (isFlipping) return;
+        transform.DOKill();
+        transform.DOScale(1.15f, 0.1f)
+        .SetEase(Ease.OutBack);
+    }
+
+    public Sequence PopAndDisappear()
+    {
+        transform.DOKill();
+
+        Sequence seq = DOTween.Sequence();
+
+        seq.Append(transform.DOScale(1.3f, 0.12f).SetEase(Ease.OutBack));
+        seq.Append(transform.DOScale(1.1f, 0.08f).SetEase(Ease.OutQuad));
+        seq.Append(transform.DOScale(0f, 0.15f).SetEase(Ease.InBack));
+
+        seq.OnComplete(() =>
+        {
+            gameObject.SetActive(false);
+        });
+
+        return seq;
     }
 }
